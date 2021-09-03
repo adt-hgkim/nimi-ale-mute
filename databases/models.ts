@@ -1,8 +1,8 @@
-import { DataTypes, Model } from "../library/denodb.ts"
+import { DataTypes, Model } from "../library/denodb.ts";
 
 class User extends Model {
-  static table = "Users"
-  static timestamps = true
+  static table = "Users";
+  static timestamps = true;
 
   static fields = {
     id: {
@@ -14,7 +14,7 @@ class User extends Model {
     pw: {
       type: DataTypes.STRING,
     },
-  }
+  };
 }
 
-export { User }
+export { User };
