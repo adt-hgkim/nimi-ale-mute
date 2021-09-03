@@ -13,7 +13,7 @@ export default class User extends Model {
       type: DataTypes.STRING,
       length: 50,
     },
-    pw: {
+    password: {
       type: DataTypes.STRING,
       length: 50,
     },

@@ -1,12 +1,15 @@
 import { RouterContext } from "../library/oak.ts"
 
-export default class Auth {
+export default class Jan {
   static get(context: RouterContext) {
     context.response.body = `get auth`
   }
 
-  static post(context: RouterContext) {
-    context.response.body = `post auth`
+  static async post(context: RouterContext) {
+    const { value } = context.request.body({ type: 'json'})
+    const { email, password } = await value
+
+    context.response.body = password + "hi" + email
   }
 
   static put(context: RouterContext) {
