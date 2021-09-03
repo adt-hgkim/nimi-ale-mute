@@ -1,15 +1,13 @@
-import Sinpin from "../nasin/sinpin.ts"
-import Jan from "../nasin/jan.ts"
-import Nimi from "../nasin/nimi.ts"
-import { Router } from "../library/oak.ts"
+import Sinpin from "../routes/sinpin.ts";
+import Jan from "../routes/jan.ts";
+import Nimi from "../routes/nimi.ts";
+import { isHttpError, Router } from "../library/oak.ts";
 
-const router = new Router()
+const router = new Router();
 
-router.get("/", Sinpin.get)
+router.get("/", Sinpin.get);
+router.get("/jan", Jan.get);
+router.post("/jan", Jan.post);
+router.get("/nimi/:nimi", Nimi.get);
 
-router.get("/jan", Jan.get)
-router.post("/jan", Jan.post)
-
-router.get("/nimi/:nimi", Nimi.get)
-
-export default router
+export default router;
