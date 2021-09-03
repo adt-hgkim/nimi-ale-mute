@@ -1,8 +1,7 @@
 import { RouterContext, Status } from "../library/oak.ts";
 import User from "../databases/models/user.ts";
-import { response } from "../util/rest.ts";
+import * as rest from "../util/rest.ts";
 import { bcrypt } from "../library/bcrypt.ts";
-import db from "../databases/db.ts";
 
 export default class Jan {
   static async get(context: RouterContext) {
@@ -12,26 +11,16 @@ export default class Jan {
     try {
       const user = await User.where("email", email).first();
       if (!user) {
-        return response(context, {
-          status: Status.Unauthorized,
-          message: "jan li lon ala",
-        });
+        return rest.response(context, rest.preset.noUser);
       }
 
       if (await bcrypt.compare(password, user.password as string)) {
-        return response(context, {});
+        return rest.response(context, {});
       } else {
-        return response(context, {
-          status: Status.Unauthorized,
-          message: "toki pimeja li ante",
-        });
+        return rest.response(context, rest.preset.noPassword);
       }
     } catch (err) {
-      return response(context, {
-        type: "reject",
-        status: Status.InternalServerError,
-        message: err.message,
-      });
+      return rest.response(context, rest.preset.error(err.message));
     }
   }
 
@@ -44,13 +33,9 @@ export default class Jan {
         email,
         password: await bcrypt.hash(password),
       });
-      return response(context, { value: lastInsertId });
+      return rest.response(context, { value: lastInsertId });
     } catch (err) {
-      return response(context, {
-        type: "reject",
-        status: Status.InternalServerError,
-        message: err.message,
-      });
+      return rest.response(context, rest.preset.error(err.message));
     }
   }
 
