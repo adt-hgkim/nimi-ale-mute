@@ -5,37 +5,48 @@ import { bcrypt } from "../library/bcrypt.ts";
 
 export default class Jan {
   static async get(context: RouterContext) {
-    const { value } = context.request.body({ type: "json" });
-    const { email, password } = await value;
-
     try {
-      const user = await User.where("email", email).first();
-      if (!user) {
-        return rest.response(context, rest.preset.noUser);
-      }
+      const { value } = context.request.body({ type: "json" });
+      const { email, password } = await value;
 
-      if (await bcrypt.compare(password, user.password as string)) {
-        return rest.response(context, {});
-      } else {
-        return rest.response(context, rest.preset.noPassword);
-      }
+      const user = await User.where("email", email).first()
+        .then(async (user) => {
+          if (!user) {
+            return rest.response(context, rest.preset.noUser);
+          }
+
+          if (!await bcrypt.compare(password, user.password as string)) {
+            return rest.response(context, rest.preset.noPassword);
+          }
+
+          return rest.response(context, {});
+        })
+        .catch((err) => {
+          return rest.response(context, rest.preset.error(err.message));
+        });
     } catch (err) {
-      return rest.response(context, rest.preset.error(err.message));
+      context.throw(err);
     }
   }
 
   static async post(context: RouterContext) {
-    const { value } = context.request.body({ type: "json" });
-    const { email, password } = await value;
-
     try {
-      const { lastInsertId } = await User.create({
+      const { value } = context.request.body({ type: "json" });
+      const { email, password } = await value;
+
+      await User.create({
         email,
         password: await bcrypt.hash(password),
+      }).then((result) => {
+        return rest.response(context, { value: result.lastInsertId });
+      }).catch((err) => {
+        rest.response(context, {
+          status: Status.Unauthorized,
+          message: err.message,
+        });
       });
-      return rest.response(context, { value: lastInsertId });
     } catch (err) {
-      return rest.response(context, rest.preset.error(err.message));
+      context.throw(err);
     }
   }
 
