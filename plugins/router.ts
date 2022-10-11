@@ -1,11 +1,13 @@
-import Main from "../routes/main.ts"
-import Auth from "../routes/auth.ts"
-import Nimi from "../routes/nimi.ts"
-import { Router } from "../library/oak.ts"
+import Sinpin from "../routes/sinpin.ts";
+import Jan from "../routes/jan.ts";
+import Nimi from "../routes/nimi.ts";
+import { isHttpError, Router } from "../library/oak.ts";
 
-const router = new Router()
-  .get("/", Main.get)
-  .get("/auth", Auth.get)
-  .get("/nimi/:nimi", Nimi.get)
+const router = new Router();
 
-export default router
+router.get("/", Sinpin.get);
+router.get("/jan", Jan.get);
+router.post("/jan", Jan.post);
+router.get("/nimi/:nimi", Nimi.get);
+
+export default router;
